@@ -6,10 +6,11 @@ from rest_framework.views import APIView
 from .models import *
 from rest_framework.response import Response
 from .serializer import *
+from rest_framework import status
 
-@APIView(['GET'])
-def hello_world(request):
-    return Response({"message": "Hello from Django!"})
+class HelloWorldView(APIView):
+    def get(self, request):
+        return Response({"message": "Hello from Django!"}, status=status.HTTP_200_OK)
 
 # Process an uploaded pdf, returning the separate text field contained within.
 # Currently not sensitive to differing text boxes, with regard to character sheets.
