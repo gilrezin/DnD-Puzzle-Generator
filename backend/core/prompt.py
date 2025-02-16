@@ -8,6 +8,10 @@ headers = {"Authorization": "Bearer hewWvVr1qsqzHQvVZSxWZaoQ5ZnXI1xrXClknLgk"}
 #     #run("@cf/meta/llama-3-8b-instruct", processUserInput())
 #     return
 
+def create_prompt(background: str, char_sheet_paths: list[str]):
+    return 
+
+
 # run function for LLM
 def run(model, inputs):
     input = {"messages": inputs, "max_tokens": 6000, "temperature": 0.3}
