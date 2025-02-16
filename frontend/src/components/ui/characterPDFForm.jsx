@@ -21,20 +21,33 @@ export default function CharacterPDFForm() { // declares this as a component tha
     }
   };
 
-  const handleSubmit = async (event) => { // handles form submission
-    event.preventDefault(); // prevents the page from reloading when the form is submitted
-    setIsGenerating(true); // sets isGenerating to true to show the loading spinner
-
-    const formData = new FormData(event.currentTarget); // collects all the form data
-
-    // Simulate an API call
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // waits for 2 seconds
-
-    setIsGenerating(false); // sets isGenerating to false to hide the loading spinner
-
-    // Handle the response from backend
-
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsGenerating(true);
+  
+    const formData = new FormData(event.currentTarget);
+  
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData, // Send files to API
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to upload");
+      }
+  
+      const result = await response.json();
+      console.log("Upload success:", result);
+      alert("File uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading:", error);
+      alert("Failed to upload file.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
+  
 
   return (
     <div className="max-w-2xl mx-auto p-4 bg-white dark:bg-gray-900 dark:text-white shadow-md rounded-lg">
