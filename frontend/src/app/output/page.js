@@ -112,7 +112,7 @@ export default function DNDResultsPage() {
 
           <div>
           <ul>
-                {items.pcs?.map((npc, index) => (
+                {items.npcs?.map((npc, index) => (
                   <li key={index} className = "bg-gray-100 ">
                     
                     <div className="font-semibold text-gray-800 pl-4">{npc.name}</div>
