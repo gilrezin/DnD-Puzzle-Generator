@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, FileText, Loader2, X } from "lucide-react";
+import React from "react";
+
+// function pageNavigator()
+// {
+//   const navigate = useNavigate();
+// }
 
 export default function CharacterPDFForm() {
   const [pdfInputs, setPdfInputs] = useState([{ id: 1 }]);
@@ -20,8 +26,9 @@ export default function CharacterPDFForm() {
   const fetchUploadedFiles = () => {
     fetch("http://localhost:8000/upload/files/")
       .then((res) => res.json())
-      .then((data) => {
+      .then((data) => {        
         console.log("Fetched Uploaded Files:", data);
+        window.location.href = "/output"; // load the output page
         if (data.uploads) {
           setUploadedFiles(data.uploads);
         }
