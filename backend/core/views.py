@@ -110,10 +110,3 @@ def get_prompt_result(request):
 def get_uploaded_files(request):
     """Returns a list of uploaded files and their associated background info"""
     return JsonResponse({"uploads": uploaded_files})
-
-def extract_text_from_pdf(pdf_path):
-    """Extracts text from a PDF file using pdfminer.six"""
-    try:
-        return extract_text(pdf_path).split("\n")  # Extract and split text by line
-    except Exception as e:
-        return {"error": f"Failed to process PDF: {str(e)}"}
