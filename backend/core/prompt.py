@@ -20,11 +20,12 @@ def run(model, inputs):
         \nyou will generate the following, in this exact JSON format { nextSession: { response : 'session response'}, 
         enemies: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ], 
         puzzles: [ {puzzleName: 'Name', puzzleDesc : 'description'}, { puzzleName : 'Name2', puzzleDesc : 'description'}],
-        pcs: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ]}:
+        npcs: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ]}:
         \nSet nextSession.response to a generalized storyline specifying what challenges await the players within the next game session. Be vague in the path the players take, as that may change over the course of the session.
         \nFill in the corresponding variables relating to enemies, in which their traits, motivations, items, stats, and movesets are included in the corresponding fields.
         \nFill in the corresponding variables relating to npcs, in which their traits, items, and personalities are included in the corresponding fields.
-        \nFill in the corresponding variables relating to puzzles that the players may encounter. Do not provide the solutions to these problems, but rather potential solutions - incorporate spells, items, and character traits that players have into the problems and their solutions.""" },
+        \nFill in the corresponding variables relating to puzzles that the players may encounter. Do not provide the solutions to these problems, but rather potential solutions - incorporate spells, items, and character traits that players have into the problems and their solutions.
+        \nEach variable marked description should be at least 3 sentences.""" },
     
     { "role": "user", "content": inputs}
 ];
