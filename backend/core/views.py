@@ -4,8 +4,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 import os
 
+from .prompt import create_prompt
+
 # In-memory storage for uploaded files (for quick access in development)
 uploaded_files = []
+uploaded_file_paths = []
 
 @csrf_exempt
 def upload_file(request):
@@ -19,6 +22,7 @@ def upload_file(request):
         # Save the file
         file_path = default_storage.save(f"uploads/{uploaded_file.name}", uploaded_file)
         file_url = f"/media/{file_path}"
+        uploaded_file_paths.append(file_path)
 
         # Extract text from PDF
         extracted_text = extract_text_from_pdf(default_storage.path(file_path))
@@ -38,6 +42,18 @@ def upload_file(request):
         })
 
     return JsonResponse({"error": "No file uploaded"}, status=400)
+
+@csrf_exempt
+def get_prompt_result(request):
+    """Returns the direct result from the LLM after prompting it with all current inputs."""
+    if request.method == "GET":
+        if (uploaded_file_paths.count < 1):
+            return JsonResponse({"error": "No files uploaded"}, status=400)
+        
+        prompt_result = create_prompt("placeholder background", uploaded_file_paths)
+        return JsonResponse({"output": prompt_result})
+    
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 @csrf_exempt
 def get_uploaded_files(request):

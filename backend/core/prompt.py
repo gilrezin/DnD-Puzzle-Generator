@@ -9,7 +9,7 @@ headers = {"Authorization": "Bearer hewWvVr1qsqzHQvVZSxWZaoQ5ZnXI1xrXClknLgk"}
 #     return
 
 def create_prompt(background: str, char_sheet_paths: list[str]):
-    return 
+    return "create_prompt placeholder output"
 
 
 # run function for LLM
@@ -32,14 +32,14 @@ summary = """Our players are on a quest from the city of Waterdeep to the far no
       far from Waterdeep, resting by the coastal town of Silverport where rumors of an oncoming army from a faraway lands in search of the goddess are abound.
       Our players consist of the following: """
 
-file = 'Merthin_Oleren.txt'
-summary += read_filtered_lines(file)
+# file = 'Merthin_Oleren.txt'
+# summary += read_filtered_lines(file)
 
-file = 'DarinsMerfolk.txt'
-summary += read_filtered_lines(file)
+# file = 'DarinsMerfolk.txt'
+# summary += read_filtered_lines(file)
 
-file = 'Gareth_Stonecobble.txt'
-summary += read_filtered_lines(file)
+# file = 'Gareth_Stonecobble.txt'
+# summary += read_filtered_lines(file)
 
 # --- end example code generation ---
 

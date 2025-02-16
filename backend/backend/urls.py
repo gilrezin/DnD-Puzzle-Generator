@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("upload/", include("core.urls")),  # Include file upload URLs
+    path("upload/", include("core.urls")),  # Include file upload URLsc
 ]
 
 # Serve uploaded files in development
