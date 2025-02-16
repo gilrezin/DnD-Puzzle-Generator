@@ -30,7 +30,7 @@ export default function CharacterPDFForm() { // declares this as a component tha
     try {
       const response = await fetch("/api/upload", {
         method: "POST",
-        body: formData, // Send files to API
+        body: formData, // Send files using FormData
       });
   
       if (!response.ok) {
@@ -39,7 +39,7 @@ export default function CharacterPDFForm() { // declares this as a component tha
   
       const result = await response.json();
       console.log("Upload success:", result);
-      alert("File uploaded successfully!");
+      alert(`File uploaded successfully: ${result.path}`);
     } catch (error) {
       console.error("Error uploading:", error);
       alert("Failed to upload file.");
@@ -47,6 +47,7 @@ export default function CharacterPDFForm() { // declares this as a component tha
       setIsGenerating(false);
     }
   };
+  
   
 
   return (
