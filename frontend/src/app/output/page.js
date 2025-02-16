@@ -35,7 +35,7 @@ export default function DNDResultsPage() {
 
         //items.nextSession = parsedData.message.ai_output.result.response.nextSession;
         setItems(parsedData);
-        console.log(items);
+        console.log(parsedData);
       } catch (error) {
         console.error("Error parsing localStorage data:", error);
       }
@@ -68,7 +68,7 @@ export default function DNDResultsPage() {
 
             <div>
               <ul>
-                {items.enemies.map((enemy, index) => (
+                {items.enemies?.map((enemy, index) => (
                   <li key={index} className = "bg-gray-100 ">
                     
                     <div className="font-semibold text-gray-800 pl-4">{enemy.name}</div>
@@ -96,7 +96,7 @@ export default function DNDResultsPage() {
 
           <div>
             <ul>
-              {items.puzzles.map((puzzle, index) => (
+              {items.puzzles?.map((puzzle, index) => (
                 <li key={puzzle.puzzleName} className="bg-gray-100">
                   <div className="font-semibold text-gray-800 pl-4">{puzzle.puzzleName}:</div>
                   <div className="text-gray-600 pl-8">{puzzle.puzzleDesc}</div>
@@ -111,24 +111,24 @@ export default function DNDResultsPage() {
           </h2>
 
           <div>
-              <ul>
-                {items.enemies.map((npcs, index) => (
+          <ul>
+                {items.pcs?.map((npc, index) => (
                   <li key={index} className = "bg-gray-100 ">
                     
-                    <div className="font-semibold text-gray-800 pl-4">{npcs.name}</div>
+                    <div className="font-semibold text-gray-800 pl-4">{npc.name}</div>
                     <div className="text-gray-600 pl-8">Equipment: </div>
                     <ul>
-                      {npcs.equipment.map((item, index) => (
+                      {npc.equipment.map((item, index) => (
                         <li key={index}>
                           <div className="text-gray-600 pl-12">{item}</div>
                         </li>
                       ))}
                     </ul>
                     
-                    <div className="text-gray-600 pl-8">Description: {npcs.description}</div>
+                    <div className="text-gray-600 pl-8">Description: {npc.description}</div>
                   </li>
                 ))}
-              </ul>
+            </ul>
             </div>
         </div>
       </div>
