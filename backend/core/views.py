@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 import re
+from .prompt import run
 
 from .prompt import create_prompt
 
@@ -79,16 +80,12 @@ def clean_extracted_text(text):
 def generate_dnd_scenario(extracted_text, background_info):
     """Runs prompt.py and sends raw AI response directly to the frontend."""
     try:
-        result = subprocess.run(
-            ["python3", "prompt.py", extracted_text, background_info],
-            capture_output=True,
-            text=True
-        )
+        text = background_info + " The players are: " + extracted_text
+        result = run("@cf/deepseek-ai/deepseek-r1-distill-qwen-32b", text)
 
-        raw_output = result.stdout.strip()
-        print("Raw AI Response from prompt.py:", raw_output)
+        print("Raw AI Response from prompt.py:", result)
 
-        return raw_output  # Send AI response as-is
+        return result  # Send AI response as-is
 
     except Exception as e:
         return json.dumps({"error": f"AI processing failed: {str(e)}"})
