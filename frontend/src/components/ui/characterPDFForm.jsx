@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, FileText, Loader2, X } from "lucide-react";
 import React from "react";
 
+
 export default function CharacterPDFForm() {
   const [pdfInputs, setPdfInputs] = useState([{ id: 1 }]);
   const [backgroundInfo, setBackgroundInfo] = useState("");
@@ -68,6 +69,12 @@ export default function CharacterPDFForm() {
 
           const result = await response.json();
           console.log(`File ${input.id} uploaded successfully:`, result);
+
+          localStorage.setItem("fileContent", JSON.stringify(result));
+
+          const savedContent = JSON.parse(localStorage.getItem("fileContent"));
+          console.log(savedContent);
+
         }
       }
       
