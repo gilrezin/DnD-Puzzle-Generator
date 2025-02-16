@@ -69,8 +69,7 @@ export default function CharacterPDFForm() {
           console.log(`File ${input.id} uploaded successfully:`, result);
         }
       }
-
-      //alert("All files processed successfully!");
+      
       fetchUploadedFiles();
       window.location.href = "/output"; // load the output page
     } catch (error) {
