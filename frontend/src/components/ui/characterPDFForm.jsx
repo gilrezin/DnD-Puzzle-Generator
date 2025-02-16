@@ -28,25 +28,37 @@ export default function CharacterPDFForm() { // declares this as a component tha
     const formData = new FormData(event.currentTarget);
   
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData, // Send files using FormData
-      });
+      for (const input of pdfInputs) {
+        const fileInput = formData.get(`character-pdf-${input.id}`);
   
-      if (!response.ok) {
-        throw new Error("Failed to upload");
+        if (fileInput) {
+          const singleFormData = new FormData();
+          singleFormData.append("file", fileInput);
+  
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            body: singleFormData,
+          });
+  
+          if (!response.ok) {
+            throw new Error("Failed to upload");
+          }
+  
+          const result = await response.json();
+          console.log(`File ${input.id} uploaded successfully:`, result);
+        }
       }
   
-      const result = await response.json();
-      console.log("Upload success:", result);
-      alert(`File uploaded successfully: ${result.path}`);
+      alert("All files processed successfully!");
     } catch (error) {
       console.error("Error uploading:", error);
-      alert("Failed to upload file.");
+      alert("Failed to upload files.");
     } finally {
       setIsGenerating(false);
     }
   };
+  
+  
   
   
 
