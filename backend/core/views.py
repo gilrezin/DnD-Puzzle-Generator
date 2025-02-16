@@ -1,8 +1,11 @@
-from pdfminer.high_level import extract_text
+import json
+import os
+import subprocess
+import fitz  # PyMuPDF for extracting text
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
-import os
+import re
 
 from .prompt import create_prompt
 
@@ -16,32 +19,80 @@ def upload_file(request):
         uploaded_file = request.FILES["file"]
         background_info = request.POST.get("background_info", "")
 
-        if not uploaded_file.name.endswith(".pdf"):
-            return JsonResponse({"error": "Only PDF files are supported"}, status=400)
-
         # Save the file
         file_path = default_storage.save(f"uploads/{uploaded_file.name}", uploaded_file)
         file_url = f"/media/{file_path}"
         uploaded_file_paths.append(file_path)
 
-        # Extract text from PDF
-        extracted_text = extract_text_from_pdf(default_storage.path(file_path))
+        # Extract text from the PDF
+        extracted_text = extract_text_from_pdf(file_path)
 
-        file_data = {
+        # Send extracted text and background info to AI model
+        ai_output_raw = generate_dnd_scenario(extracted_text, background_info)
+
+        # Log raw AI output for debugging
+        print("Raw AI Output:", ai_output_raw)
+
+        # Store file URL, extracted text, and raw AI output
+        uploaded_files.append({
             "file_url": file_url,
             "background_info": background_info,
-            "extracted_text": extracted_text
-        }
-        uploaded_files.append(file_data)
+            "extracted_text": extracted_text,
+            "ai_output": ai_output_raw  # Send raw response directly
+        })
 
         return JsonResponse({
             "message": "File uploaded and processed successfully",
             "file_url": file_url,
             "background_info": background_info,
-            "extracted_text": extracted_text
+            "extracted_text": extracted_text,
+            "ai_output": ai_output_raw  # Send raw response directly
         })
 
     return JsonResponse({"error": "No file uploaded"}, status=400)
+
+
+def extract_text_from_pdf(file_path):
+    """Extracts and cleans text from a given PDF file."""
+    full_path = os.path.join("media", file_path)
+    text = ""
+
+    try:
+        with fitz.open(full_path) as doc:
+            for page in doc:
+                text += page.get_text("text") + "\n"
+
+        text = clean_extracted_text(text)
+
+    except Exception as e:
+        text = f"Error extracting text: {str(e)}"
+
+    return text
+
+
+def clean_extracted_text(text):
+    """Cleans extracted text by removing extra spaces and formatting issues."""
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
+
+def generate_dnd_scenario(extracted_text, background_info):
+    """Runs prompt.py and sends raw AI response directly to the frontend."""
+    try:
+        result = subprocess.run(
+            ["python3", "prompt.py", extracted_text, background_info],
+            capture_output=True,
+            text=True
+        )
+
+        raw_output = result.stdout.strip()
+        print("Raw AI Response from prompt.py:", raw_output)
+
+        return raw_output  # Send AI response as-is
+
+    except Exception as e:
+        return json.dumps({"error": f"AI processing failed: {str(e)}"})
+
 
 @csrf_exempt
 def get_prompt_result(request):
