@@ -2,6 +2,14 @@
 import pdfplumber
 from django.shortcuts import render
 from .forms import PDFUploadForm
+from rest_framework.views import APIView
+from .models import *
+from rest_framework.response import Response
+from .serializer import *
+
+@APIView(['GET'])
+def hello_world(request):
+    return Response({"message": "Hello from Django!"})
 
 # Process an uploaded pdf, returning the separate text field contained within.
 # Currently not sensitive to differing text boxes, with regard to character sheets.
