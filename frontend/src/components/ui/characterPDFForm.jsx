@@ -10,9 +10,8 @@ export default function CharacterPDFForm() {
   const [pdfInputs, setPdfInputs] = useState([{ id: 1 }]);
   const [backgroundInfo, setBackgroundInfo] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState([]); // Store uploaded files
+  const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  // Fetch uploaded files from Django when the page loads
   useEffect(() => {
     fetchUploadedFiles();
   }, []);
@@ -21,6 +20,7 @@ export default function CharacterPDFForm() {
     fetch("http://localhost:8000/upload/files/")
       .then((res) => res.json())
       .then((data) => {
+        console.log("Fetched Uploaded Files:", data);
         if (data.uploads) {
           setUploadedFiles(data.uploads);
         }
@@ -53,7 +53,7 @@ export default function CharacterPDFForm() {
           singleFormData.append("file", fileInput);
           singleFormData.append("background_info", backgroundInfo);
 
-          const response = await fetch("/api/upload", {
+          const response = await fetch("http://localhost:8000/upload/", {
             method: "POST",
             body: singleFormData,
           });
@@ -68,8 +68,6 @@ export default function CharacterPDFForm() {
       }
 
       alert("All files processed successfully!");
-      
-      // Refresh the uploaded files list after submission
       fetchUploadedFiles();
     } catch (error) {
       console.error("Error uploading:", error);
@@ -138,12 +136,32 @@ export default function CharacterPDFForm() {
                 <a
                   href={`http://localhost:8000${file.file_url}`}
                   target="_blank"
-                  rel="noopener noreferrer" // Fix for blocked popups
+                  rel="noopener noreferrer"
                   className="text-blue-500 underline"
                 >
                   View PDF {index + 1}
                 </a>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Background: {file.background_info}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Background: {file.background_info || "No background info provided"}
+                </p>
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-sm font-semibold">
+                    View Extracted Text
+                  </summary>
+                  <p className="text-xs text-gray-700 dark:text-gray-300 mt-1">
+                    {file.extracted_text || "No extracted text available"}
+                  </p>
+                </details>
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-sm font-semibold">
+                    View AI-Generated D&D Scenario
+                  </summary>
+                  <p className="text-xs text-gray-700 dark:text-gray-300 mt-1">
+                    {typeof file.ai_output === "string"
+                      ? file.ai_output
+                      : JSON.stringify(file.ai_output, null, 2)}
+                  </p>
+                </details>
               </li>
             ))}
           </ul>
