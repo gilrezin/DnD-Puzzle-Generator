@@ -15,7 +15,7 @@ export default function CharacterPDFForm() {
   // Fetch uploaded files from Django when the page loads
   useEffect(() => {
     fetchUploadedFiles();
-    backgroundInfo = document.cookie;
+    setBackgroundInfo(document.cookie);
   }, []);
 
   const fetchUploadedFiles = () => {
@@ -116,7 +116,7 @@ export default function CharacterPDFForm() {
           value={backgroundInfo}
           onChange={(e) => {
             setBackgroundInfo(e.target.value);
-            document.cookie = `backgroundInfo=${e.target.value}`;
+            document.cookie = e.target.value;
           }}
           rows={4}
           className="w-full dark:bg-gray-800 dark:text-white dark:border-gray-600"
