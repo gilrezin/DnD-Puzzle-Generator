@@ -40,6 +40,7 @@ export default function CharacterPDFForm() {
   };
 
   const handleSubmit = async (event) => {
+    document.cookie = backgroundInfo;
     event.preventDefault();
     setIsGenerating(true);
 
@@ -117,7 +118,6 @@ export default function CharacterPDFForm() {
           value={backgroundInfo}
           onChange={(e) => {
             setBackgroundInfo(e.target.value);
-            document.cookie = e.target.value;
           }}
           rows={4}
           className="w-full dark:bg-gray-800 dark:text-white dark:border-gray-600"
