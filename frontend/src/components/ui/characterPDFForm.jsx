@@ -1,22 +1,39 @@
-"use client"; // tells file that it is a client component
+"use client";
 
-import { useState } from "react"; // react hook that allows us to manage component state
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, FileText, Loader2, X } from "lucide-react"; // lucide icons
+import { Plus, FileText, Loader2, X } from "lucide-react";
 
-export default function CharacterPDFForm() { // declares this as a component that can be imported elsewhere
-  const [pdfInputs, setPdfInputs] = useState([{ id: 1 }]); // pdfInputs is a state variable that holds an array of objects with an id key, starts with one object
-  const [backgroundInfo, setBackgroundInfo] = useState(""); // backgroundInfo holds the background information for the character
-  const [isGenerating, setIsGenerating] = useState(false);  // isGenerating is true when the form is being submitted, It prevents multiple submissions & shows a loading spinner
+export default function CharacterPDFForm() {
+  const [pdfInputs, setPdfInputs] = useState([{ id: 1 }]);
+  const [backgroundInfo, setBackgroundInfo] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]); // Store uploaded files
 
-  const addPdfInput = () => { // adds a new pdf input to the form
-    setPdfInputs([...pdfInputs, { id: Date.now() }]); // date.now() is used to generate a unique id
+  // Fetch uploaded files from Django when the page loads
+  useEffect(() => {
+    fetchUploadedFiles();
+  }, []);
+
+  const fetchUploadedFiles = () => {
+    fetch("http://localhost:8000/upload/files/")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.uploads) {
+          setUploadedFiles(data.uploads);
+        }
+      })
+      .catch((err) => console.error("Error fetching uploaded files:", err));
   };
 
-  const removePdfInput = (id) => { // removes a pdf input from the form
-    if (pdfInputs.length > 1) { // ensures that there is at least one pdf input
+  const addPdfInput = () => {
+    setPdfInputs([...pdfInputs, { id: Date.now() }]);
+  };
+
+  const removePdfInput = (id) => {
+    if (pdfInputs.length > 1) {
       setPdfInputs(pdfInputs.filter((input) => input.id !== id));
     }
   };
@@ -24,31 +41,43 @@ export default function CharacterPDFForm() { // declares this as a component tha
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsGenerating(true);
-  
+
     const formData = new FormData(event.currentTarget);
-  
+
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData, // Send files using FormData
-      });
-  
-      if (!response.ok) {
-        throw new Error("Failed to upload");
+      for (const input of pdfInputs) {
+        const fileInput = formData.get(`character-pdf-${input.id}`);
+
+        if (fileInput) {
+          const singleFormData = new FormData();
+          singleFormData.append("file", fileInput);
+          singleFormData.append("background_info", backgroundInfo);
+
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            body: singleFormData,
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to upload");
+          }
+
+          const result = await response.json();
+          console.log(`File ${input.id} uploaded successfully:`, result);
+        }
       }
-  
-      const result = await response.json();
-      console.log("Upload success:", result);
-      alert(`File uploaded successfully: ${result.path}`);
+
+      alert("All files processed successfully!");
+      
+      // Refresh the uploaded files list after submission
+      fetchUploadedFiles();
     } catch (error) {
       console.error("Error uploading:", error);
-      alert("Failed to upload file.");
+      alert("Failed to upload files.");
     } finally {
       setIsGenerating(false);
     }
   };
-  
-  
 
   return (
     <div className="max-w-2xl mx-auto p-4 bg-white dark:bg-gray-900 dark:text-white shadow-md rounded-lg">
@@ -57,11 +86,11 @@ export default function CharacterPDFForm() { // declares this as a component tha
         {pdfInputs.map((input) => (
           <div key={input.id} className="flex items-center space-x-2">
             <Input
-                type="file"
-                name={`character-pdf-${input.id}`}
-                accept=".pdf"
-                required
-                className="flex-grow dark:bg-gray-800 dark:text-white dark:border-gray-600"
+              type="file"
+              name={`character-pdf-${input.id}`}
+              accept=".pdf"
+              required
+              className="flex-grow dark:bg-gray-800 dark:text-white dark:border-gray-600"
             />
             <FileText className="text-gray-400 flex-shrink-0" />
             {pdfInputs.length > 1 && (
@@ -82,23 +111,44 @@ export default function CharacterPDFForm() { // declares this as a component tha
           <Plus className="mr-2 h-4 w-4" /> Add Another PDF
         </Button>
         <Textarea
-            placeholder="Enter background information here..."
-            value={backgroundInfo}
-            onChange={(e) => setBackgroundInfo(e.target.value)}
-            rows={4}
-            className="w-full dark:bg-gray-800 dark:text-white dark:border-gray-600"
+          placeholder="Enter background information here..."
+          value={backgroundInfo}
+          onChange={(e) => setBackgroundInfo(e.target.value)}
+          rows={4}
+          className="w-full dark:bg-gray-800 dark:text-white dark:border-gray-600"
         />
         <Button type="submit" className="w-full" disabled={isGenerating}>
           {isGenerating ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
+              Uploading...
             </>
           ) : (
-            "Generate"
+            "Submit"
           )}
         </Button>
       </form>
+
+      {uploadedFiles.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-xl font-bold">Uploaded Files</h2>
+          <ul className="mt-2 space-y-2">
+            {uploadedFiles.map((file, index) => (
+              <li key={index} className="p-2 bg-gray-200 dark:bg-gray-700 rounded-md">
+                <a
+                  href={`http://localhost:8000${file.file_url}`}
+                  target="_blank"
+                  rel="noopener noreferrer" // Fix for blocked popups
+                  className="text-blue-500 underline"
+                >
+                  View PDF {index + 1}
+                </a>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Background: {file.background_info}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
