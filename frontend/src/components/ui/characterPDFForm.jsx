@@ -7,11 +7,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, FileText, Loader2, X } from "lucide-react";
 import React from "react";
 
-// function pageNavigator()
-// {
-//   const navigate = useNavigate();
-// }
-
 export default function CharacterPDFForm() {
   const [pdfInputs, setPdfInputs] = useState([{ id: 1 }]);
   const [backgroundInfo, setBackgroundInfo] = useState("");
@@ -28,7 +23,6 @@ export default function CharacterPDFForm() {
       .then((res) => res.json())
       .then((data) => {        
         console.log("Fetched Uploaded Files:", data);
-        window.location.href = "/output"; // load the output page
         if (data.uploads) {
           setUploadedFiles(data.uploads);
         }
@@ -76,8 +70,9 @@ export default function CharacterPDFForm() {
         }
       }
 
-      alert("All files processed successfully!");
+      //alert("All files processed successfully!");
       fetchUploadedFiles();
+      window.location.href = "/output"; // load the output page
     } catch (error) {
       console.error("Error uploading:", error);
       alert("Failed to upload files.");

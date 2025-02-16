@@ -4,7 +4,7 @@ const items = {
     nextSession: { response : 'session response'},
     enemies: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ], 
     puzzles: [ {puzzleName: 'Name', puzzleDesc : 'description'}, { puzzleName : 'Name2', puzzleDesc : 'description'}]  ,
-    enemies: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ]
+    npcs: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ]
 }
 
 export default function DNDResultsPage() {
@@ -78,20 +78,20 @@ export default function DNDResultsPage() {
 
           <div>
               <ul>
-                {items.enemies.map((enemy, index) => (
+                {items.enemies.map((npcs, index) => (
                   <li key={index} className = "bg-gray-100 ">
                     
-                    <div className="font-semibold text-gray-800 pl-4">{enemy.name}</div>
+                    <div className="font-semibold text-gray-800 pl-4">{npcs.name}</div>
                     <div className="text-gray-600 pl-8">Equipment: </div>
                     <ul>
-                      {enemy.equipment.map((item, index) => (
+                      {npcs.equipment.map((item, index) => (
                         <li key={index}>
                           <div className="text-gray-600 pl-12">{item}</div>
                         </li>
                       ))}
                     </ul>
                     
-                    <div className="text-gray-600 pl-8">Description: {enemy.description}</div>
+                    <div className="text-gray-600 pl-8">Description: {npcs.description}</div>
                   </li>
                 ))}
               </ul>
