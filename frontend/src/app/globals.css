@@ -17,6 +17,11 @@ h2 {
   font-size: large;
 }
 
+textarea {
+  font-size:x-small !important;
+  line-height: normal !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -28,6 +28,7 @@ def run(model, inputs):
 
     input = {"messages": prompt, "max_tokens": 6000, "temperature": 0.3}
     response = requests.post(   f"{API_BASE_URL}{model}", headers=headers, json=input)
+    print(response.json)
     return response.json()
 
 # # removes all plaintext lines of 1 word or less
