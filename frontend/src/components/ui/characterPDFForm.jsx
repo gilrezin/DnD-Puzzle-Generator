@@ -25,6 +25,7 @@ export default function CharacterPDFForm() {
         console.log("Fetched Uploaded Files:", data);
         if (data.uploads) {
           setUploadedFiles(data.uploads);
+          response_file_path = default_storage.save(f"uploads/result", data);
         }
       })
       .catch((err) => console.error("Error fetching uploaded files:", err));
@@ -72,6 +73,10 @@ export default function CharacterPDFForm() {
 
       //alert("All files processed successfully!");
       fetchUploadedFiles();
+
+      file_path = default_storage.save(f"uploads/{uploaded_file.name}", uploaded_file)
+      file_url = f"/media/{file_path}"
+
       window.location.href = "/output"; // load the output page
     } catch (error) {
       console.error("Error uploading:", error);
