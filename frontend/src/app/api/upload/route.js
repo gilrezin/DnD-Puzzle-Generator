@@ -4,6 +4,7 @@ export async function POST(req) {
   try {
     const formData = await req.formData();
     const file = formData.get("file");
+    const backgroundInfo = formData.get("background_info");
 
     if (!file) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
@@ -12,8 +13,11 @@ export async function POST(req) {
     // Prepare form data to send to Django
     const djangoFormData = new FormData();
     djangoFormData.append("file", file, file.name);
+    if (backgroundInfo) {
+      djangoFormData.append("background_info", backgroundInfo);
+    }
 
-    // Send file to Django backend
+    // Send file and background info to Django backend
     const djangoResponse = await fetch("http://localhost:8000/upload/", {
       method: "POST",
       body: djangoFormData,

@@ -1,36 +1,33 @@
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
+import os
 
-import pdfplumber
-from django.shortcuts import render
-from .forms import PDFUploadForm
-from rest_framework.views import APIView
-from .models import *
-from rest_framework.response import Response
-from .serializer import *
-from rest_framework import status
+# In-memory storage for uploaded files (for quick access in development)
+uploaded_files = []
 
-class HelloWorldView(APIView):
-    def get(self, request):
-        return Response({"message": "Hello from Django!"}, status=status.HTTP_200_OK)
+@csrf_exempt
+def upload_file(request):
+    if request.method == "POST" and request.FILES.get("file"):
+        uploaded_file = request.FILES["file"]
+        background_info = request.POST.get("background_info", "")
 
-# Process an uploaded pdf, returning the separate text field contained within.
-# Currently not sensitive to differing text boxes, with regard to character sheets.
-def handle_uploaded_pdf(pdf_path):
-    with pdfplumber.open(pdf_path) as pdf:
-        text_fields = []
-        for page in pdf.pages:
-            text_fields.append(page.extract_text())
-        return text_fields
+        # Save file
+        file_path = default_storage.save(f"uploads/{uploaded_file.name}", uploaded_file)
+        file_url = f"/media/{file_path}"
 
-# Handles the http request for uploading a pdf.
-# Process the pdf into separate text boxes and render the results.
-def upload_pdf(request):
-    if request.method == 'POST' and request.FILES['pdf_file']:
-        form = PDFUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            pdf_document = form.save()
-            pdf_path = pdf_document.pdf_file.path
-            text_fields = handle_uploaded_pdf(pdf_path)
-            return render(request, 'pdf_results.html', {'text_fields': text_fields})
-    else:
-        form = PDFUploadForm()
-    return render(request, 'upload_pdf.html', {'form': form})
+        # Store file URL and background info
+        uploaded_files.append({"file_url": file_url, "background_info": background_info})
+
+        return JsonResponse({
+            "message": "File uploaded successfully",
+            "file_url": file_url,
+            "background_info": background_info  
+        })
+
+    return JsonResponse({"error": "No file uploaded"}, status=400)
+
+@csrf_exempt
+def get_uploaded_files(request):
+    """Returns a list of uploaded files and their associated background info"""
+    return JsonResponse({"uploads": uploaded_files})
