@@ -15,6 +15,7 @@ export default function CharacterPDFForm() {
   // Fetch uploaded files from Django when the page loads
   useEffect(() => {
     fetchUploadedFiles();
+    backgroundInfo = document.cookie;
   }, []);
 
   const fetchUploadedFiles = () => {
@@ -113,7 +114,10 @@ export default function CharacterPDFForm() {
         <Textarea
           placeholder="Enter background information here..."
           value={backgroundInfo}
-          onChange={(e) => setBackgroundInfo(e.target.value)}
+          onChange={(e) => {
+            setBackgroundInfo(e.target.value);
+            document.cookie = `backgroundInfo=${e.target.value}`;
+          }}
           rows={4}
           className="w-full dark:bg-gray-800 dark:text-white dark:border-gray-600"
         />
