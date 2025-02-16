@@ -17,7 +17,10 @@ def run(model, inputs):
     # LLM prompt
     prompt = [  
     { "role": "system", "content": """You are a co-dungeon master for a game of Dungeons & Dragons. Given a story and characters provided by the user, 
-        you will generate the following, each paragraph surrounded by double square brackets:
+        \nyou will generate the following, in this format { nextSession: { response : 'session response'},
+        \nenemies: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ], 
+        \npuzzles: [ {puzzleName: 'Name', puzzleDesc : 'description'}, { puzzleName : 'Name2', puzzleDesc : 'description'}],
+        \nenemies: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ]}:
         \n- A generalized storyline specifying what challenges await the players within the next game session. Be vague in the path the players take, as that may change over the course of the session.
         \n- A list of friendly NPCs the players may encounter. List their traits, their items, and their personalities.
         \n- A list of significant enemies the players may encounter. List their traits, motivations, items, stats, and movesets.
