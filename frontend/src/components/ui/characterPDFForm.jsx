@@ -82,7 +82,10 @@ export default function CharacterPDFForm() {
 
   return (
     <div className="max-w-2xl mx-auto p-4 bg-white dark:bg-gray-900 dark:text-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Character PDF Submission</h1>
+      <div style={{ fontFamily: "'Petit Formal Script', cursive" }}>
+      <b><h1>Dungeons and Dragons: Co-DM</h1></b>
+      <h2>Diversify your D&D experience!</h2></div>
+      <h4>Let us create new, exciting scenario ideas for your players!</h4>
       <form onSubmit={handleSubmit} className="space-y-4">
         {pdfInputs.map((input) => (
           <div key={input.id} className="flex items-center space-x-2">
@@ -109,10 +112,10 @@ export default function CharacterPDFForm() {
           </div>
         ))}
         <Button type="button" onClick={addPdfInput} variant="outline" className="w-full">
-          <Plus className="mr-2 h-4 w-4" /> Add Another PDF
+          <Plus className="mr-2 h-4 w-4" /> Add Another Character PDF
         </Button>
         <Textarea
-          placeholder="Enter background information here..."
+          placeholder="What's your game's background? Summarize your adventure thus far."
           value={backgroundInfo}
           onChange={(e) => {
             setBackgroundInfo(e.target.value);
@@ -128,7 +131,7 @@ export default function CharacterPDFForm() {
               Uploading...
             </>
           ) : (
-            "Submit"
+            "Generate!"
           )}
         </Button>
       </form>
