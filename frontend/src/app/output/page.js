@@ -1,13 +1,47 @@
-import { ScrollText, Sword, Anvil, PuzzleIcon as PuzzlePiece } from "lucide-react"
+"use client";
 
-const items = {
-    nextSession: { response : 'session response'},
-    enemies: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ], 
-    puzzles: [ {puzzleName: 'Name', puzzleDesc : 'description'}, { puzzleName : 'Name2', puzzleDesc : 'description'}]  ,
-    npcs: [ {name: 'Guy', equipment : ['sword', 'shield'], description : 'a guy'}, {name: 'Guy2', equipment : ['bow', 'arrow'], description : 'a guy'} ]
-}
+import { ScrollText, Sword, Anvil, PuzzleIcon as PuzzlePiece } from "lucide-react"
+import { useEffect, useState } from "react";
+
 
 export default function DNDResultsPage() {
+  const [items, setItems] = useState({
+    nextSession: { response: 'session response' },
+    enemies: [
+      { name: 'Guy', equipment: ['sword', 'shield'], description: 'a guy' },
+      { name: 'Guy2', equipment: ['bow', 'arrow'], description: 'a guy' }
+    ],
+    puzzles: [
+      { puzzleName: 'Name', puzzleDesc: 'description' },
+      { puzzleName: 'Name2', puzzleDesc: 'description' }
+    ],
+    npcs: [
+      { name: 'Guy', equipment: ['sword', 'shield'], description: 'a guy' },
+      { name: 'Guy2', equipment: ['bow', 'arrow'], description: 'a guy' }
+    ]
+  });
+
+  useEffect(() => {
+    // Retrieve stored data from localStorage
+    const savedData = localStorage.getItem("fileContent");
+    if (savedData) {
+      try {
+        let parsedData = JSON.parse(savedData);
+        //parsedData = JSON.parse(parsedData.ai_output.result.response);
+        parsedData = parsedData.ai_output.result.response.substring(parsedData.ai_output.result.response.indexOf("```json") + 7, 
+            parsedData.ai_output.result.response.length - 3);
+
+        parsedData = JSON.parse(parsedData);
+
+        //items.nextSession = parsedData.message.ai_output.result.response.nextSession;
+        setItems(parsedData);
+        console.log(items);
+      } catch (error) {
+        console.error("Error parsing localStorage data:", error);
+      }
+    }
+  }, [])
+
   return (
     <div className="min-h-screen bg-[url('/images/StoneTextureBright.jpg')] bg-fixed dark:bg-gray-900 p-4 sm:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">

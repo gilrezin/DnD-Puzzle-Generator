@@ -71,15 +71,11 @@ export default function CharacterPDFForm() {
 
           localStorage.setItem("fileContent", JSON.stringify(result));
 
-          const savedContent = JSON.parse(localStorage.getItem("fileContent"));
-          console.log(savedContent);
-
         }
       }
 
       //alert("All files processed successfully!");
       fetchUploadedFiles();
-      
       window.location.href = "/output"; // load the output page
     } catch (error) {
       console.error("Error uploading:", error);
